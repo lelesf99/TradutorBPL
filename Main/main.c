@@ -2,19 +2,30 @@
 
 int main() {
 
-	int i = 0, j;
+	int i, j;
+	char l[256];
 	Line line;
-	Function tmpFn;
+	Function tmpFn[10];
 
-	initAssembly();
-
-	for (line = readLine(); line.nWords != 0; line = readLine()){
+	// Leitura/salvamento
+	for (line = readLine(), i = 0; line.nWords != 0; line = readLine()){
 		if (strcmp(line.word[0], "function") == 0 || strcmp(line.word[0], "call") == 0) {
-			printf("\nfunção %s na linha %d\n", line.word[1], line.n);
-			tmpFn = newFunction(line);
-			writeFn(tmpFn);
+			newFunction(line, &tmpFn[i]);
+			i++;
 		}
 	}
-	
+	// Tradução/escrita em arquivo
+	initAssembly();
+	j = i;
+	for (i = 0; i < j; ++i) {
+		wFn(&tmpFn[i]);
+	}
+	// Tradução/escrita no stdout
+	FILE * trad;
+	trad = fopen("IO/trad.S", "r");
+	while(fscanf(trad, "%s", l) != EOF) {
+		printf("%s ", l);
+		if (getc(trad) == '\n')printf("\n");
+	}
 	return 0;
 }
